@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import base64
 
 # App Configuration
 st.set_page_config(page_title="Data Cleanlytics - ETL + Dashboard", layout="wide")
@@ -55,16 +54,22 @@ if uploaded_file:
             if st.button(f"Apply Mapping to '{col}'", key=f"map_{col}"):
                 df[col] = df[col].map(mapping)
                 st.success(f"Applied mapping to column: {col}")
-                st.dataframe(df.head())
     else:
         st.info("No categorical columns found.")
+
+    st.subheader("Preview of Cleaned Data")
+    st.dataframe(df)
 
     # Download Transformed Data
     st.subheader("Download Cleaned Data")
     csv = df.to_csv(index=False)
-    b64 = base64.b64encode(csv.encode()).decode()
-    href = f'<a href="data:file/csv;base64,{b64}" download="cleaned_data.csv">Download CSV File</a>'
-    st.markdown(href, unsafe_allow_html=True)
+    st.download_button(
+    label="Download CSV File",
+    data=csv,
+    file_name="cleaned_data.csv",
+    mime="text/csv"
+    )
+
 
     # Dashboard Visualization
     st.subheader("Data Visualization Dashboard")
